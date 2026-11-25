@@ -50,9 +50,29 @@ Multi-Axis Router (router.py)
 
 ## Quick Start
 
-### 1. Environment Setup
+### Option A: Zero-Clone Install (`uvx` or `pip` directly from GitHub)
+
+Run the gateway or MCP server without manually cloning the repository:
 
 ```powershell
+# Run directly with uvx (no manual venv or clone)
+uvx --from git+https://github.com/Hiak-Harsha/dynamic-dual-model dual-mode-gateway --port 8787
+uvx --from git+https://github.com/Hiak-Harsha/dynamic-dual-model dual-mode-agent --provider ollama --model llama3.2
+
+# Or install CLI commands once via pip:
+pip install git+https://github.com/Hiak-Harsha/dynamic-dual-model.git
+dual-mode-gateway --port 8787
+dual-mode-agent --list-providers
+dual-mode-mcp
+```
+
+Antigravity (`agy`) / MCP plugin bundle is also included under `plugins/dynamic-dual-model/` (`plugin.json`, `mcp_config.json`, `skills/dynamic-dual-model/SKILL.md`).
+
+### Option B: Local Development Setup
+
+```powershell
+git clone https://github.com/Hiak-Harsha/dynamic-dual-model.git
+cd dynamic-dual-model
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt

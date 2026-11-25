@@ -146,7 +146,7 @@ def run(
     print(stats.report())
 
 
-if __name__ == "__main__":
+def main() -> None:
     parser = argparse.ArgumentParser(description="Adaptive Dual-Path Agent v9 (Universal Model Runtime)")
     parser.add_argument(
         "--provider",
@@ -190,4 +190,8 @@ if __name__ == "__main__":
         sys.exit(1)
 
     run(runtime.provider, provider_label=label, runtime=runtime)
+
+
+if __name__ == "__main__":
+    main()
 

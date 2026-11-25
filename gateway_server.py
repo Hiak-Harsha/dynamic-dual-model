@@ -338,7 +338,7 @@ def start_server(
     return server, gw_engine
 
 
-if __name__ == "__main__":
+def main() -> None:
     parser = argparse.ArgumentParser(description="Universal Dual-Mode HTTP/SSE Gateway Server")
     parser.add_argument("--host", default="127.0.0.1", help="Bind host (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=8787, help="Bind port (default: 8787)")
@@ -369,3 +369,7 @@ if __name__ == "__main__":
         print("\nShutting down Universal Dual-Mode Gateway.")
         server.shutdown()
         server.server_close()
+
+
+if __name__ == "__main__":
+    main()

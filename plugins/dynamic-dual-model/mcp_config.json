@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "dynamic-dual-model": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/Hiak-Harsha/dynamic-dual-model",
+        "dual-mode-mcp"
+      ]
+    }
+  }
+}

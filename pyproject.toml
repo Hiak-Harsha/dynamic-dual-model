@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dynamic-dual-model"
+version = "9.1.0"
+description = "Adaptive Dual-Mode LLM Architecture with Universal HTTP/SSE Gateway and MCP Server"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "anthropic>=0.40.0",
+    "openai>=1.50.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/Hiak-Harsha/dynamic-dual-model"
+Repository = "https://github.com/Hiak-Harsha/dynamic-dual-model"
+
+[project.scripts]
+dual-mode-agent = "dual_mode_agent:main"
+dual-mode-gateway = "gateway_server:main"
+dual-mode-mcp = "mcp_server:serve_stdio"
+
+[tool.setuptools]
+py-modules = [
+    "anthropic_provider",
+    "base",
+    "brain",
+    "controller",
+    "dual_mode_agent",
+    "execution_state",
+    "gateway",
+    "gateway_server",
+    "gemini_provider",
+    "handoff",
+    "mcp_server",
+    "mock_provider",
+    "muscle_engine",
+    "ollama_provider",
+    "openai_provider",
+    "procedural_memory",
+    "procedure_executor",
+    "provider_registry",
+    "restart_agent",
+    "retry_util",
+    "router",
+    "success_contracts",
+    "tools",
+    "universal_runtime",
+    "verification",
+]

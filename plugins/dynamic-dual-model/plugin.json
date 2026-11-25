@@ -1,0 +1,8 @@
+{
+  "name": "dynamic-dual-model",
+  "version": "9.1.0",
+  "description": "Adaptive Dual-Mode LLM router, 0-token deterministic Muscle Memory MCP tools, and Universal HTTP/SSE Gateway.",
+  "author": "Hiak-Harsha",
+  "repository": "https://github.com/Hiak-Harsha/dynamic-dual-model",
+  "homepage": "https://github.com/Hiak-Harsha/dynamic-dual-model"
+}
