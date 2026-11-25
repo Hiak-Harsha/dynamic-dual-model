@@ -1,0 +1,224 @@
+[
+  {
+    "id": "json_validator",
+    "name": "Deterministic JSON Validator",
+    "schema_version": "2.0",
+    "semantic_intent": "Validate or parse a JSON payload using deterministic Python parser",
+    "intent_family": "json_validation_and_parsing",
+    "trigger_patterns": [
+      "\\b(validate|check|verify|parse)\\b.*\\bjson\\b",
+      "\\bis\\b.*\\bvalid\\s+json\\b"
+    ],
+    "preconditions": [
+      "Input contains a potential JSON object or array payload"
+    ],
+    "non_applicability_conditions": [
+      "Input is empty or purely conversational"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Extract candidate JSON block between ```json or braces/brackets",
+      "Call deterministic json.loads parser",
+      "Record schema properties and verify structural validity"
+    ],
+    "procedure_type": "DETERMINISTIC",
+    "deterministic_handler": "deterministic_json_validation",
+    "procedure": "deterministic_json_validation",
+    "required_tools": [],
+    "tool_constraints": [],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "structural",
+    "verification": "structural",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 10,
+    "failure_count": 0,
+    "consecutive_failures": 0,
+    "distinct_variant_count": 3,
+    "distinct_variants": [
+      "var_json_1",
+      "var_json_2",
+      "var_json_3"
+    ],
+    "empirical_success_rate": 1.0,
+    "calibrated_confidence": 1.0,
+    "confidence": 1.0,
+    "status": "eligible",
+    "is_deterministic": true,
+    "revision_history": [],
+    "success_count": 10
+  },
+  {
+    "id": "text_statistics",
+    "name": "Deterministic Text Statistics",
+    "schema_version": "2.0",
+    "semantic_intent": "Compute line, word, and character counts deterministically",
+    "intent_family": "text_statistics_analysis",
+    "trigger_patterns": [
+      "\\b(count|statistics|stats)\\b.*\\b(words|lines|characters|chars)\\b",
+      "\\bhow\\s+many\\s+(words|lines|characters)\\b"
+    ],
+    "preconditions": [
+      "Input contains text payload to analyze"
+    ],
+    "non_applicability_conditions": [
+      "Input is empty or conversational greeting"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Extract target string payload from message",
+      "Compute len(lines), len(words), len(characters)",
+      "Format deterministic statistical report"
+    ],
+    "procedure_type": "DETERMINISTIC",
+    "deterministic_handler": "deterministic_text_statistics",
+    "procedure": "deterministic_text_statistics",
+    "required_tools": [],
+    "tool_constraints": [],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "structural",
+    "verification": "structural",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 10,
+    "failure_count": 0,
+    "consecutive_failures": 0,
+    "distinct_variant_count": 3,
+    "distinct_variants": [
+      "var_txt_1",
+      "var_txt_2",
+      "var_txt_3"
+    ],
+    "empirical_success_rate": 1.0,
+    "calibrated_confidence": 1.0,
+    "confidence": 1.0,
+    "status": "eligible",
+    "is_deterministic": true,
+    "revision_history": [],
+    "success_count": 10
+  },
+  {
+    "id": "ast_arithmetic",
+    "name": "Deterministic AST Arithmetic Evaluator",
+    "schema_version": "2.0",
+    "semantic_intent": "Safely evaluate basic mathematical expressions via AST",
+    "intent_family": "numeric_arithmetic_evaluation",
+    "trigger_patterns": [
+      "^\\s*(?:calculate|compute|what is)\\s+[-+*/%^0-9\\s().]+\\??$",
+      "^\\s*[-+*/%^0-9\\s().]+\\??$"
+    ],
+    "preconditions": [
+      "Expression contains only numeric constants and basic arithmetic operators"
+    ],
+    "non_applicability_conditions": [
+      "Expression contains function calls, attribute access, or non-numeric tokens"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Sanitize arithmetic expression string",
+      "Parse AST with mode=eval",
+      "Recursively evaluate supported operator nodes safely",
+      "Return exact formatted numeric result"
+    ],
+    "procedure_type": "DETERMINISTIC",
+    "deterministic_handler": "deterministic_ast_arithmetic",
+    "procedure": "deterministic_ast_arithmetic",
+    "required_tools": [],
+    "tool_constraints": [],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "exact",
+    "verification": "exact",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 10,
+    "failure_count": 0,
+    "consecutive_failures": 0,
+    "distinct_variant_count": 3,
+    "distinct_variants": [
+      "var_math_1",
+      "var_math_2",
+      "var_math_3"
+    ],
+    "empirical_success_rate": 1.0,
+    "calibrated_confidence": 1.0,
+    "confidence": 1.0,
+    "status": "eligible",
+    "is_deterministic": true,
+    "revision_history": [],
+    "success_count": 10
+  },
+  {
+    "id": "safe_read_file_procedure",
+    "name": "Validated File Inspection Tool Sequence",
+    "schema_version": "2.0",
+    "semantic_intent": "Safely read and inspect file contents within sandbox",
+    "intent_family": "file_inspection_read",
+    "trigger_patterns": [
+      "^\\s*read_file\\b",
+      "^\\s*(?:read|inspect|view)(?:\\s+file)?\\s+['\"]?[\\w\\-\\.\\/]+['\"]?"
+    ],
+    "preconditions": [
+      "Target file path is specified inside sandbox"
+    ],
+    "non_applicability_conditions": [
+      "Target is directory or outside sandbox"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Extract path parameter",
+      "Verify sandbox path boundary",
+      "Execute read_file tool under SkillToolPolicy",
+      "Verify file content returned without errors"
+    ],
+    "procedure_type": "TOOL_SEQUENCE",
+    "deterministic_handler": "",
+    "procedure": "{\"id\": \"safe_read_file_procedure\", \"name\": \"Validated File Inspection\", \"steps\": [{\"id\": \"extract_path\", \"step_type\": \"EXTRACT_REGEX\", \"pattern\": \"['\\\"]?([\\\\w\\\\-\\\\.\\\\/]+\\\\.(?:py|json|txt|md|csv))['\\\"]?\", \"source_var\": \"user_input\", \"output_var\": \"target_file\"}, {\"id\": \"read_target\", \"step_type\": \"TOOL_CALL\", \"tool\": \"read_file\", \"arguments\": {\"path\": \"${target_file}\"}, \"output_var\": \"file_content\"}, {\"id\": \"return_result\", \"step_type\": \"RETURN\", \"return_expr\": \"${file_content}\"}]}",
+    "required_tools": [
+      "read_file"
+    ],
+    "tool_constraints": [
+      "path inside sandbox",
+      "max_calls: 2"
+    ],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "execution",
+    "verification": "execution",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 5,
+    "failure_count": 0,
+    "consecutive_failures": 0,
+    "distinct_variant_count": 2,
+    "distinct_variants": [
+      "var_rf_1",
+      "var_rf_2"
+    ],
+    "empirical_success_rate": 1.0,
+    "calibrated_confidence": 0.9,
+    "confidence": 0.9,
+    "status": "eligible",
+    "is_deterministic": false,
+    "revision_history": [],
+    "success_count": 5
+  }
+]

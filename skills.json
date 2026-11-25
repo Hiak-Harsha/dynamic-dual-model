@@ -1,0 +1,660 @@
+[
+  {
+    "id": "json_validator",
+    "name": "Deterministic JSON Validator",
+    "schema_version": "2.0",
+    "semantic_intent": "Validate or parse a JSON payload using deterministic Python parser",
+    "intent_family": "json_validation_and_parsing",
+    "trigger_patterns": [
+      "\\b(validate|check|verify|parse)\\b.*\\bjson\\b",
+      "\\bis\\b.*\\bvalid\\s+json\\b"
+    ],
+    "preconditions": [
+      "Input contains a potential JSON object or array payload"
+    ],
+    "non_applicability_conditions": [
+      "Input is empty or purely conversational"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Extract candidate JSON block between ```json or braces/brackets",
+      "Call deterministic json.loads parser",
+      "Record schema properties and verify structural validity"
+    ],
+    "procedure_type": "DETERMINISTIC",
+    "deterministic_handler": "deterministic_json_validation",
+    "procedure": "deterministic_json_validation",
+    "required_tools": [],
+    "tool_constraints": [],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "structural",
+    "verification": "structural",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 10,
+    "failure_count": 3,
+    "consecutive_failures": 1,
+    "distinct_variant_count": 3,
+    "distinct_variants": [
+      "var_json_1",
+      "var_json_2",
+      "var_json_3"
+    ],
+    "empirical_success_rate": 0.7692,
+    "calibrated_confidence": 0.7692,
+    "confidence": 0.85,
+    "status": "trusted",
+    "is_deterministic": true,
+    "created_at": "2026-09-03T15:00:33.739535+00:00",
+    "last_validated_at": "2026-09-03T16:30:51.225536+00:00",
+    "revision_history": [],
+    "success_count": 10
+  },
+  {
+    "id": "text_statistics",
+    "name": "Deterministic Text Statistics",
+    "schema_version": "2.0",
+    "semantic_intent": "Compute word, line, and character count deterministically",
+    "intent_family": "text_statistics_analysis",
+    "trigger_patterns": [
+      "\\b(count|statistics|stats|number\\s+of)\\b.*\\b(words|lines|characters|chars)\\b",
+      "\\bword\\s+count\\b"
+    ],
+    "preconditions": [
+      "Input text is provided in the message"
+    ],
+    "non_applicability_conditions": [
+      "File path provided instead of inline text"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Extract target text segment",
+      "Count lines, words, and characters via standard string methods",
+      "Format summary report"
+    ],
+    "procedure_type": "DETERMINISTIC",
+    "deterministic_handler": "deterministic_text_statistics",
+    "procedure": "deterministic_text_statistics",
+    "required_tools": [],
+    "tool_constraints": [],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "exact",
+    "verification": "exact",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 10,
+    "failure_count": 0,
+    "consecutive_failures": 0,
+    "distinct_variant_count": 3,
+    "distinct_variants": [
+      "var_stats_1",
+      "var_stats_2",
+      "var_stats_3"
+    ],
+    "empirical_success_rate": 1.0,
+    "calibrated_confidence": 1.0,
+    "confidence": 1.0,
+    "status": "eligible",
+    "is_deterministic": true,
+    "created_at": "2026-09-03T15:00:33.739600+00:00",
+    "last_validated_at": "2026-09-03T15:00:33.739606+00:00",
+    "revision_history": [],
+    "success_count": 10
+  },
+  {
+    "id": "ast_arithmetic",
+    "name": "Deterministic AST Arithmetic Evaluator",
+    "schema_version": "2.0",
+    "semantic_intent": "Safely evaluate basic mathematical expressions via AST",
+    "intent_family": "numeric_arithmetic_evaluation",
+    "trigger_patterns": [
+      "^\\s*(?:calculate|compute|what is)\\s+[-+*/%^0-9\\s().]+\\??$",
+      "^\\s*[-+*/%^0-9\\s().]+\\??$"
+    ],
+    "preconditions": [
+      "Expression contains only numeric constants and basic arithmetic operators"
+    ],
+    "non_applicability_conditions": [
+      "Expression contains function calls, attribute access, or non-numeric tokens"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Sanitize arithmetic expression string",
+      "Parse AST with mode=eval",
+      "Recursively evaluate supported operator nodes safely",
+      "Return exact formatted numeric result"
+    ],
+    "procedure_type": "DETERMINISTIC",
+    "deterministic_handler": "deterministic_ast_arithmetic",
+    "procedure": "deterministic_ast_arithmetic",
+    "required_tools": [],
+    "tool_constraints": [],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "exact",
+    "verification": "exact",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 14,
+    "failure_count": 1,
+    "consecutive_failures": 1,
+    "distinct_variant_count": 5,
+    "distinct_variants": [
+      "var_math_1",
+      "var_math_2",
+      "var_math_3",
+      "ee9d72ac",
+      "0e7095dc"
+    ],
+    "empirical_success_rate": 0.9333,
+    "calibrated_confidence": 0.9333,
+    "confidence": 1.0,
+    "status": "eligible",
+    "is_deterministic": true,
+    "created_at": "2026-09-03T16:27:15.437991+00:00",
+    "last_validated_at": "2026-09-03T19:46:27.493010+00:00",
+    "revision_history": [],
+    "success_count": 14
+  },
+  {
+    "id": "safe_read_file_procedure",
+    "name": "Validated File Inspection Tool Sequence",
+    "schema_version": "2.0",
+    "semantic_intent": "Safely read and inspect file contents within sandbox",
+    "intent_family": "file_inspection_read",
+    "trigger_patterns": [
+      "^\\s*read_file\\b",
+      "^\\s*(?:read|inspect|view)(?:\\s+file)?\\s+['\\\"]?[\\w\\-\\.\\/]+['\\\"]?"
+    ],
+    "preconditions": [
+      "Target file path is specified inside sandbox"
+    ],
+    "non_applicability_conditions": [
+      "Target is directory or outside sandbox"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Extract path parameter",
+      "Verify sandbox path boundary",
+      "Execute read_file tool under SkillToolPolicy",
+      "Verify file content returned without errors"
+    ],
+    "procedure_type": "TOOL_SEQUENCE",
+    "deterministic_handler": "",
+    "procedure": "{\"sequence\": [{\"tool\": \"read_file\", \"extract_arg\": \"path\"}]}",
+    "required_tools": [
+      "read_file"
+    ],
+    "tool_constraints": [
+      "path inside sandbox",
+      "max_calls: 2"
+    ],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "execution",
+    "verification": "execution",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 5,
+    "failure_count": 3,
+    "consecutive_failures": 1,
+    "distinct_variant_count": 2,
+    "distinct_variants": [
+      "var_rf_1",
+      "var_rf_2"
+    ],
+    "empirical_success_rate": 0.625,
+    "calibrated_confidence": 0.625,
+    "confidence": 0.85,
+    "status": "trusted",
+    "is_deterministic": false,
+    "created_at": "2026-09-03T15:00:33.739646+00:00",
+    "last_validated_at": "2026-09-03T16:30:51.313094+00:00",
+    "revision_history": [],
+    "success_count": 5
+  },
+  {
+    "id": "arithmetic_evaluator",
+    "name": "Deterministic AST Arithmetic Evaluator",
+    "schema_version": "2.0",
+    "semantic_intent": "Evaluate simple arithmetic operations deterministically via AST parser",
+    "intent_family": "numeric_arithmetic_evaluation",
+    "trigger_patterns": [
+      "^\\s*(what\\s+is\\s+)?(calculate\\s+|compute\\s+)?[-+]?\\d+(\\.\\d+)?\\s*[\\+\\-\\*\\/\\%]\\s*[-+]?\\d+",
+      "\\bcalculate\\s+[-+]?\\d+",
+      "\\bwhat\\s+is\\s+[-+]?\\d+\\s*[\\+\\-\\*\\/]"
+    ],
+    "preconditions": [
+      "Input contains standard arithmetic operators (+, -, *, /, %) with numeric literals"
+    ],
+    "non_applicability_conditions": [
+      "Arbitrary code execution or non-whitelisted functions requested"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Extract mathematical expression string",
+      "Parse into Python AST and validate operator whitelist",
+      "Evaluate arithmetic and return exact numerical output"
+    ],
+    "procedure_type": "DETERMINISTIC",
+    "deterministic_handler": "deterministic_ast_arithmetic",
+    "procedure": "deterministic_ast_arithmetic",
+    "required_tools": [],
+    "tool_constraints": [],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "exact",
+    "verification": "exact",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 10,
+    "failure_count": 0,
+    "consecutive_failures": 0,
+    "distinct_variant_count": 3,
+    "distinct_variants": [
+      "var_math_1",
+      "var_math_2",
+      "var_math_3"
+    ],
+    "empirical_success_rate": 1.0,
+    "calibrated_confidence": 1.0,
+    "confidence": 1.0,
+    "status": "eligible",
+    "is_deterministic": true,
+    "created_at": "2026-09-03T15:00:33.739625+00:00",
+    "last_validated_at": "2026-09-03T15:00:33.739629+00:00",
+    "revision_history": [],
+    "success_count": 10
+  },
+  {
+    "id": "proc_json_validation_and_parsing_validate",
+    "name": "Learned JSON Validation & Parsing",
+    "schema_version": "2.0",
+    "semantic_intent": "Reusable procedure for JSON Validation & Parsing",
+    "intent_family": "json_validation_and_parsing",
+    "trigger_patterns": [
+      "^\\s*validate\\b.*",
+      ".*\\bjson\\ validation\\ and\\ parsing\\b.*"
+    ],
+    "preconditions": [
+      "Input matches intent family json_validation_and_parsing"
+    ],
+    "non_applicability_conditions": [
+      "Destructive actions or malformed inputs"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Attempted deterministic JSON validation",
+      "Deliberative reasoning conclusion reached"
+    ],
+    "procedure_type": "MODEL_ADAPTIVE",
+    "deterministic_handler": "",
+    "procedure": "{\"intent\": \"json_validation_and_parsing\", \"steps\": [\"Attempted deterministic JSON validation\", \"Deliberative reasoning conclusion reached\"], \"required_tools\": []}",
+    "required_tools": [],
+    "tool_constraints": [],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "consistency",
+    "verification": "consistency",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 1,
+    "failure_count": 0,
+    "consecutive_failures": 0,
+    "distinct_variant_count": 1,
+    "distinct_variants": [
+      "3afb79a4"
+    ],
+    "empirical_success_rate": 1.0,
+    "calibrated_confidence": 0.5,
+    "confidence": 0.5,
+    "status": "candidate",
+    "is_deterministic": false,
+    "created_at": "2026-09-03T16:27:15.447799+00:00",
+    "last_validated_at": "2026-09-03T16:30:51.227315+00:00",
+    "revision_history": [],
+    "success_count": 1
+  },
+  {
+    "id": "proc_file_inspection_read_read_file",
+    "name": "Learned File Inspection & Read",
+    "schema_version": "2.0",
+    "semantic_intent": "Reusable procedure for File Inspection & Read",
+    "intent_family": "file_inspection_read",
+    "trigger_patterns": [
+      "^\\s*read_file\\b.*",
+      ".*\\bfile\\ inspection\\ read\\b.*"
+    ],
+    "preconditions": [
+      "Input matches intent family file_inspection_read"
+    ],
+    "non_applicability_conditions": [
+      "Destructive actions or malformed inputs"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Initiated tool sequence procedure: safe_read_file_procedure",
+      "Deliberative reasoning conclusion reached"
+    ],
+    "procedure_type": "TOOL_SEQUENCE",
+    "deterministic_handler": "",
+    "procedure": "{\"id\": \"proc_file_inspection_read_read_file\", \"name\": \"Action Graph for File Inspection & Read\", \"steps\": [{\"id\": \"step_1\", \"step_type\": \"TOOL_CALL\", \"tool\": \"read_file\", \"arguments\": {\"path\": \"app_config.json\"}, \"output_var\": \"out_1\"}, {\"id\": \"step_2\", \"step_type\": \"RETURN\", \"return_expr\": \"${out_1}\"}]}",
+    "required_tools": [
+      "read_file"
+    ],
+    "tool_constraints": [],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "consistency",
+    "verification": "consistency",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 0,
+    "failure_count": 0,
+    "consecutive_failures": 0,
+    "distinct_variant_count": 0,
+    "distinct_variants": [],
+    "empirical_success_rate": 0.0,
+    "calibrated_confidence": 0.5,
+    "confidence": 0.5,
+    "status": "candidate",
+    "is_deterministic": false,
+    "created_at": "2026-09-03T16:30:51.245840+00:00",
+    "last_validated_at": "2026-09-03T16:30:51.245846+00:00",
+    "revision_history": [],
+    "success_count": 0
+  },
+  {
+    "id": "proc_file_inspection_read_read",
+    "name": "Learned File Inspection & Read",
+    "schema_version": "2.0",
+    "semantic_intent": "Reusable procedure for File Inspection & Read",
+    "intent_family": "file_inspection_read",
+    "trigger_patterns": [
+      "^\\s*read\\b.*",
+      ".*\\bfile\\ inspection\\ read\\b.*"
+    ],
+    "preconditions": [
+      "Input matches intent family file_inspection_read"
+    ],
+    "non_applicability_conditions": [
+      "Destructive actions or malformed inputs"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Initiated tool sequence procedure: safe_read_file_procedure",
+      "Deliberative reasoning conclusion reached"
+    ],
+    "procedure_type": "TOOL_SEQUENCE",
+    "deterministic_handler": "",
+    "procedure": "{\"id\": \"proc_file_inspection_read_read\", \"name\": \"Action Graph for File Inspection & Read\", \"steps\": [{\"id\": \"step_1\", \"step_type\": \"TOOL_CALL\", \"tool\": \"read_file\", \"arguments\": {\"path\": \"app_config.json\"}, \"output_var\": \"out_1\"}, {\"id\": \"step_2\", \"step_type\": \"RETURN\", \"return_expr\": \"${out_1}\"}]}",
+    "required_tools": [
+      "read_file"
+    ],
+    "tool_constraints": [],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "consistency",
+    "verification": "consistency",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 0,
+    "failure_count": 0,
+    "consecutive_failures": 0,
+    "distinct_variant_count": 0,
+    "distinct_variants": [],
+    "empirical_success_rate": 0.0,
+    "calibrated_confidence": 0.5,
+    "confidence": 0.5,
+    "status": "candidate",
+    "is_deterministic": false,
+    "created_at": "2026-09-03T16:30:51.261607+00:00",
+    "last_validated_at": "2026-09-03T16:30:51.261614+00:00",
+    "revision_history": [],
+    "success_count": 0
+  },
+  {
+    "id": "proc_file_inspection_read_inspect",
+    "name": "Learned File Inspection & Read",
+    "schema_version": "2.0",
+    "semantic_intent": "Reusable procedure for File Inspection & Read",
+    "intent_family": "file_inspection_read",
+    "trigger_patterns": [
+      "^\\s*inspect\\b.*",
+      ".*\\bfile\\ inspection\\ read\\b.*"
+    ],
+    "preconditions": [
+      "Input matches intent family file_inspection_read"
+    ],
+    "non_applicability_conditions": [
+      "Destructive actions or malformed inputs"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Initiated tool sequence procedure: safe_read_file_procedure",
+      "Deliberative reasoning conclusion reached"
+    ],
+    "procedure_type": "TOOL_SEQUENCE",
+    "deterministic_handler": "",
+    "procedure": "{\"id\": \"proc_file_inspection_read_inspect\", \"name\": \"Action Graph for File Inspection & Read\", \"steps\": [{\"id\": \"step_1\", \"step_type\": \"TOOL_CALL\", \"tool\": \"read_file\", \"arguments\": {\"path\": \"calc_math.py\"}, \"output_var\": \"out_1\"}, {\"id\": \"step_2\", \"step_type\": \"RETURN\", \"return_expr\": \"${out_1}\"}]}",
+    "required_tools": [
+      "read_file"
+    ],
+    "tool_constraints": [],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "consistency",
+    "verification": "consistency",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 0,
+    "failure_count": 0,
+    "consecutive_failures": 0,
+    "distinct_variant_count": 0,
+    "distinct_variants": [],
+    "empirical_success_rate": 0.0,
+    "calibrated_confidence": 0.5,
+    "confidence": 0.5,
+    "status": "candidate",
+    "is_deterministic": false,
+    "created_at": "2026-09-03T16:30:51.314252+00:00",
+    "last_validated_at": "2026-09-03T16:30:51.314258+00:00",
+    "revision_history": [],
+    "success_count": 0
+  },
+  {
+    "id": "proc_numeric_arithmetic_evaluation_what",
+    "name": "Learned Numeric Arithmetic Evaluation",
+    "schema_version": "2.0",
+    "semantic_intent": "Reusable procedure for Numeric Arithmetic Evaluation",
+    "intent_family": "numeric_arithmetic_evaluation",
+    "trigger_patterns": [
+      "^\\s*what\\b.*",
+      ".*\\bnumeric\\ arithmetic\\ evaluation\\b.*"
+    ],
+    "preconditions": [
+      "Input matches intent family numeric_arithmetic_evaluation"
+    ],
+    "non_applicability_conditions": [
+      "Destructive actions or malformed inputs"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Attempted safe AST arithmetic evaluation",
+      "Deliberative reasoning conclusion reached"
+    ],
+    "procedure_type": "MODEL_ADAPTIVE",
+    "deterministic_handler": "",
+    "procedure": "{\"intent\": \"numeric_arithmetic_evaluation\", \"steps\": [\"Attempted safe AST arithmetic evaluation\", \"Deliberative reasoning conclusion reached\"], \"required_tools\": []}",
+    "required_tools": [],
+    "tool_constraints": [],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "structural",
+    "verification": "structural",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 0,
+    "failure_count": 0,
+    "consecutive_failures": 0,
+    "distinct_variant_count": 0,
+    "distinct_variants": [],
+    "empirical_success_rate": 0.0,
+    "calibrated_confidence": 0.5,
+    "confidence": 0.5,
+    "status": "candidate",
+    "is_deterministic": false,
+    "created_at": "2026-09-03T19:46:27.494586+00:00",
+    "last_validated_at": "2026-09-03T19:46:27.494600+00:00",
+    "revision_history": [],
+    "success_count": 0
+  },
+  {
+    "id": "proc_file_write_operation_write",
+    "name": "Learned File Write Operation",
+    "schema_version": "2.0",
+    "semantic_intent": "Reusable procedure for File Write Operation",
+    "intent_family": "file_write_operation",
+    "trigger_patterns": [
+      "^\\s*write\\b.*",
+      ".*\\bfile\\ write\\ operation\\b.*"
+    ],
+    "preconditions": [
+      "Input matches intent family file_write_operation"
+    ],
+    "non_applicability_conditions": [
+      "Destructive actions or malformed inputs"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Deliberative tool execution: read_file",
+      "Deliberative reasoning conclusion reached"
+    ],
+    "procedure_type": "TOOL_SEQUENCE",
+    "deterministic_handler": "",
+    "procedure": "{\"id\": \"proc_file_write_operation_write\", \"name\": \"Action Graph for File Write Operation\", \"steps\": [{\"id\": \"extract_step_1\", \"step_type\": \"EXTRACT_REGEX\", \"pattern\": \"['\\\\\\\"]?([a-zA-Z0-9_\\\\-\\\\.\\\\/]+\\\\.[a-zA-Z0-9_]{1,6})['\\\\\\\"]?\", \"source_var\": \"user_input\", \"output_var\": \"extracted_path\"}, {\"id\": \"step_1\", \"step_type\": \"TOOL_CALL\", \"tool\": \"read_file\", \"arguments\": {\"path\": \"test.txt\"}, \"output_var\": \"out_1\"}, {\"id\": \"step_3\", \"step_type\": \"RETURN\", \"return_expr\": \"${out_1}\"}]}",
+    "required_tools": [
+      "read_file"
+    ],
+    "tool_constraints": [],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "structural",
+    "verification": "structural",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 0,
+    "failure_count": 0,
+    "consecutive_failures": 0,
+    "distinct_variant_count": 0,
+    "distinct_variants": [],
+    "empirical_success_rate": 0.0,
+    "calibrated_confidence": 0.5,
+    "confidence": 0.5,
+    "status": "candidate",
+    "is_deterministic": false,
+    "created_at": "2026-09-03T19:46:27.556023+00:00",
+    "last_validated_at": "2026-09-03T19:46:27.556045+00:00",
+    "revision_history": [],
+    "success_count": 0
+  },
+  {
+    "id": "proc_file_write_operation_can",
+    "name": "Learned File Write Operation",
+    "schema_version": "2.0",
+    "semantic_intent": "Reusable procedure for File Write Operation",
+    "intent_family": "file_write_operation",
+    "trigger_patterns": [
+      "^\\s*can\\b.*",
+      ".*\\bfile\\ write\\ operation\\b.*"
+    ],
+    "preconditions": [
+      "Input matches intent family file_write_operation"
+    ],
+    "non_applicability_conditions": [
+      "Destructive actions or malformed inputs"
+    ],
+    "inputs": [],
+    "outputs": [],
+    "steps": [
+      "Deliberative tool execution: read_file",
+      "Deliberative reasoning conclusion reached"
+    ],
+    "procedure_type": "TOOL_SEQUENCE",
+    "deterministic_handler": "",
+    "procedure": "{\"id\": \"proc_file_write_operation_can\", \"name\": \"Action Graph for File Write Operation\", \"steps\": [{\"id\": \"extract_step_1\", \"step_type\": \"EXTRACT_REGEX\", \"pattern\": \"['\\\\\\\"]?([a-zA-Z0-9_\\\\-\\\\.\\\\/]+\\\\.[a-zA-Z0-9_]{1,6})['\\\\\\\"]?\", \"source_var\": \"user_input\", \"output_var\": \"extracted_path\"}, {\"id\": \"step_1\", \"step_type\": \"TOOL_CALL\", \"tool\": \"read_file\", \"arguments\": {\"path\": \"test.txt\"}, \"output_var\": \"out_1\"}, {\"id\": \"step_3\", \"step_type\": \"RETURN\", \"return_expr\": \"${out_1}\"}]}",
+    "required_tools": [
+      "read_file"
+    ],
+    "tool_constraints": [],
+    "decision_points": [],
+    "expected_observations": [],
+    "verification_rules": [],
+    "success_contract": "consistency",
+    "verification": "consistency",
+    "failure_conditions": [],
+    "recovery_strategy": "",
+    "environment_constraints": {},
+    "version": "1.0",
+    "verified_success_count": 0,
+    "failure_count": 0,
+    "consecutive_failures": 0,
+    "distinct_variant_count": 0,
+    "distinct_variants": [],
+    "empirical_success_rate": 0.0,
+    "calibrated_confidence": 0.5,
+    "confidence": 0.5,
+    "status": "candidate",
+    "is_deterministic": false,
+    "created_at": "2026-09-04T10:43:30.337043+00:00",
+    "last_validated_at": "2026-09-04T10:43:30.337060+00:00",
+    "revision_history": [],
+    "success_count": 0
+  }
+]

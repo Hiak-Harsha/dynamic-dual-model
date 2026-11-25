@@ -1,0 +1,33 @@
+# Python cache & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+
+# Runtime session logs & data
+logs/*.jsonl
+!logs/.gitkeep
+session_turns.jsonl
+results/*.json
+memory/
+runtime/
+
+# Environment and secrets
+.env
+
+# Temporary test artifacts
+*.tmp*
+*.backup
+.coverage
+experiments/
+test.txt
+test_output.txt
+test_v5_*.txt
+test_injection_*.txt
+procedural_test.txt
+frontier_cache_test.txt
+verif_exec_test.txt
+config_test.json
+math_helper.py
