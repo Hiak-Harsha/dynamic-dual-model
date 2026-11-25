@@ -355,6 +355,16 @@ def test_mcp_server_protocol_and_tools():
     assert skill_payload["matched"] is True
     assert "status" in skill_payload["skill"]
 
+    skill_list_res = mcp.handle_message({
+        "jsonrpc": "2.0",
+        "id": 7,
+        "method": "tools/call",
+        "params": {"name": "procedural_skill_lookup", "arguments": {"query": ""}},
+    })
+    skill_list_payload = json.loads(skill_list_res["result"]["content"][0]["text"])
+    assert skill_list_payload["listed_all_trusted"] is True
+    assert skill_list_payload["count"] >= 2
+
     prov_res = mcp.handle_message({
         "jsonrpc": "2.0",
         "id": 6,

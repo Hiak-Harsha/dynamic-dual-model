@@ -53,13 +53,12 @@ TOOL_DEFINITIONS: List[Dict[str, Any]] = [
     },
     {
         "name": "procedural_skill_lookup",
-        "description": "Search trusted procedural skills stored in ProceduralMemory for matching workflows.",
+        "description": "Search trusted procedural skills stored in ProceduralMemory for matching workflows, or list all trusted skills when query is empty.",
         "inputSchema": {
             "type": "object",
             "properties": {
-                "query": {"type": "string", "description": "Task description or query to match against skills."}
+                "query": {"type": "string", "description": "Task description or query to match against skills (optional; empty lists all trusted skills)."}
             },
-            "required": ["query"],
         },
     },
     {
@@ -183,20 +182,25 @@ class DualModeMCPServer:
             }, indent=2), False
 
         if name == "procedural_skill_lookup":
-            query = str(arguments.get("query", ""))
+            query = str(arguments.get("query", "")).strip()
+            if not query:
+                trusted = sorted(
+                    (s for s in self.memory.skills.values() if s.status in {"trusted", "eligible"}),
+                    key=lambda s: s.id,
+                )
+                return json.dumps({
+                    "matched": False,
+                    "listed_all_trusted": True,
+                    "count": len(trusted),
+                    "skills": [self._serialize_skill(s) for s in trusted],
+                }, indent=2), False
+
             skill = self.memory.retrieve(query, only_trusted=True)
             if skill is None:
                 return json.dumps({"matched": False, "skill": None}, indent=2), False
             return json.dumps({
                 "matched": True,
-                "skill": {
-                    "id": skill.id,
-                    "name": skill.name,
-                    "procedure_type": skill.procedure_type,
-                    "status": skill.status,
-                    "verified_success_count": skill.verified_success_count,
-                    "required_tools": skill.required_tools,
-                },
+                "skill": self._serialize_skill(skill),
             }, indent=2), False
 
         if name == "provider_status":
@@ -204,6 +208,18 @@ class DualModeMCPServer:
             return json.dumps({"providers": reg.provider_info()}, indent=2), False
 
         return f"Unknown tool: {name}", True
+
+    @staticmethod
+    def _serialize_skill(skill: Any) -> Dict[str, Any]:
+        """Serializes a ProceduralMemory Skill summary cleanly."""
+        return {
+            "id": skill.id,
+            "name": skill.name,
+            "procedure_type": skill.procedure_type,
+            "status": skill.status,
+            "verified_success_count": skill.verified_success_count,
+            "required_tools": skill.required_tools,
+        }
 
 
 def serve_stdio() -> None:  # pragma: no cover
