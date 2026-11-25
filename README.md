@@ -111,6 +111,59 @@ All providers plug into `UniversalModelRuntime` (`universal_runtime.py`) via `Mo
 
 ---
 
+## Universal HTTP/SSE Gateway & MCP Server (Cross-Platform Integration)
+
+You can run the system as a local **OpenAI + Anthropic-compatible HTTP/SSE gateway** (`gateway_server.py`) or as a **stdio MCP server** (`mcp_server.py`) on Windows, macOS, and Linux with zero extra dependencies.
+
+### 1. Start the Universal Gateway (`gateway_server.py`)
+
+```powershell
+# Auto-detects local Ollama for Muscle Memory, and passes complex/tool turns
+# transparently to your upstream OpenAI/Anthropic key (or set --brain-provider)
+python gateway_server.py --port 8787
+
+# 100% local $0 mode using Ollama for both Muscle and Brain tiers
+python gateway_server.py --port 8787 --muscle-provider ollama --muscle-model llama3.2 --brain-provider ollama --brain-model llama3.2
+
+# Print cross-platform environment variables (PowerShell & bash/zsh)
+python gateway_server.py --print-env
+```
+
+Supported HTTP endpoints:
+- `POST /v1/chat/completions` (OpenAI Chat Completions, streaming SSE + JSON)
+- `POST /v1/responses` (OpenAI Responses API, streaming SSE + JSON)
+- `POST /v1/messages` (Anthropic Messages API, streaming SSE + JSON)
+- `GET /v1/models`, `GET /v1/stats` (live token/cost savings telemetry), `GET /health`
+
+Point any compatible client (OpenAI/Anthropic SDKs, Claude Code, Codex, Cursor, Cline, Open WebUI, `curl`) to the gateway:
+
+```powershell
+# Windows PowerShell
+$env:OPENAI_BASE_URL="http://127.0.0.1:8787/v1"
+$env:ANTHROPIC_BASE_URL="http://127.0.0.1:8787"
+```
+
+```bash
+# macOS / Linux
+export OPENAI_BASE_URL="http://127.0.0.1:8787/v1"
+export ANTHROPIC_BASE_URL="http://127.0.0.1:8787"
+```
+
+### 2. Stdio MCP Server (`mcp_server.py`)
+
+For MCP hosts (Antigravity / `agy`, Claude Desktop, Cursor, VS Code, Windsurf), register:
+
+```json
+{
+  "command": "python",
+  "args": ["mcp_server.py"]
+}
+```
+
+Exposed MCP tools: `dual_mode_route`, `muscle_execute`, `procedural_skill_lookup`, and `provider_status`.
+
+---
+
 ## Testing, Verification & Audit Sync
 
 ```powershell
