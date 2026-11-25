@@ -336,5 +336,33 @@ def test_mcp_server_protocol_and_tools():
     assert payload["tokens_used"] == 0
     assert "81" in payload["output"]
 
+    route_res = mcp.handle_message({
+        "jsonrpc": "2.0",
+        "id": 4,
+        "method": "tools/call",
+        "params": {"name": "dual_mode_route", "arguments": {"prompt": "what is 9 * 9?"}},
+    })
+    route_payload = json.loads(route_res["result"]["content"][0]["text"])
+    assert route_payload["pathway"] == "muscle"
+
+    skill_res = mcp.handle_message({
+        "jsonrpc": "2.0",
+        "id": 5,
+        "method": "tools/call",
+        "params": {"name": "procedural_skill_lookup", "arguments": {"query": "what is 9 * 9?"}},
+    })
+    skill_payload = json.loads(skill_res["result"]["content"][0]["text"])
+    assert skill_payload["matched"] is True
+    assert "status" in skill_payload["skill"]
+
+    prov_res = mcp.handle_message({
+        "jsonrpc": "2.0",
+        "id": 6,
+        "method": "tools/call",
+        "params": {"name": "provider_status", "arguments": {}},
+    })
+    prov_payload = json.loads(prov_res["result"]["content"][0]["text"])
+    assert any(p["name"] == "mock" for p in prov_payload["providers"])
+
     # Notifications return None
     assert mcp.handle_message({"jsonrpc": "2.0", "method": "notifications/initialized"}) is None

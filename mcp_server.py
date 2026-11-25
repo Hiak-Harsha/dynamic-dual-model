@@ -11,8 +11,11 @@ Usage:
 
 from __future__ import annotations
 import json
+import os
 import sys
 from typing import Any, Dict, List, Optional
+
+REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 from base import ConversationState, ProviderResponse, ResponseCache
 from execution_state import ExecutionState, COMPLETED_VERIFIED
@@ -79,7 +82,10 @@ class DualModeMCPServer:
         memory: Optional[ProceduralMemory] = None,
     ):
         self.cache = cache or ResponseCache()
-        self.memory = memory or ProceduralMemory()
+        self.memory = memory or ProceduralMemory(
+            storage_path=os.path.join(REPO_ROOT, "skills.json"),
+            seed_path=os.path.join(REPO_ROOT, "seed_skills.json"),
+        )
         self.executor = MuscleExecutor(provider=None, memory=self.memory, cache=self.cache)
 
     def handle_message(self, msg: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -187,7 +193,7 @@ class DualModeMCPServer:
                     "id": skill.id,
                     "name": skill.name,
                     "procedure_type": skill.procedure_type,
-                    "trust_tier": skill.trust_tier,
+                    "status": skill.status,
                     "verified_success_count": skill.verified_success_count,
                     "required_tools": skill.required_tools,
                 },
