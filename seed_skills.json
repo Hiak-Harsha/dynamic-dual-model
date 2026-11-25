@@ -61,7 +61,8 @@
     "intent_family": "text_statistics_analysis",
     "trigger_patterns": [
       "\\b(count|statistics|stats)\\b.*\\b(words|lines|characters|chars)\\b",
-      "\\bhow\\s+many\\s+(words|lines|characters)\\b"
+      "\\bhow\\s+many\\s+(words|lines|characters)\\b",
+      "^\\s*(?:(?:compute|calculate|get|show)\\s+)?(?:text\\s+)?(?:statistics|stats)\\s*(?:of|for)?\\s*:"
     ],
     "preconditions": [
       "Input contains text payload to analyze"

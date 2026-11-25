@@ -307,9 +307,11 @@ def run_paired_conditions_c_and_d(provider: ModelProvider, workload: List[Dict[s
             d_tool_calls += len(d_exec.tool_actions)
             d_recomps += d_rep_count
 
-            # Contract verification for Condition D
+            # Contract verification for Condition D (evaluate against post-continuation execution state)
+            if d_last.stop_reason == "end_turn":
+                d_exec.errors = []
             contract_d = resolve_contract(msg, provider=provider)
-            d_eval = contract_d.evaluate(d_checkpoint, d_reply, d_exec)
+            d_eval = contract_d.evaluate(d_exec, d_reply, d_exec)
             d_success = d_eval.verified or (d_eval.task_satisfied and not d_exec.errors)
 
             d_results.append({
@@ -479,17 +481,19 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="4-Condition Scientific AB Runner")
     parser.add_argument("--mock", action="store_true", default=True, help="Run with deterministic MockProvider")
     parser.add_argument("--live", action="store_true", help="Run with live LLM provider")
-    parser.add_argument("--provider", default="anthropic", choices=["anthropic", "openai"])
+    parser.add_argument("--provider", default="anthropic", choices=["anthropic", "openai", "ollama", "gemini", "openrouter"])
+    parser.add_argument("--model", default=None, help="Explicit model override for live provider")
     parser.add_argument("--limit", type=int, default=None, help="Cap number of benchmark tasks")
     args = parser.parse_args()
 
     if args.live:
-        if args.provider == "anthropic":
-            from anthropic_provider import AnthropicProvider
-            prov = AnthropicProvider()
-        else:
-            from openai_provider import OpenAIProvider
-            prov = OpenAIProvider()
+        from provider_registry import build_default_registry
+        factory = build_default_registry().get_factory(args.provider)
+        if factory is None or not factory.is_available():
+            status = factory.status_label() if factory else "UNAVAILABLE"
+            print(f"\n[ERROR] Provider '{args.provider}' is not available ({status}).\n")
+            sys.exit(1)
+        prov = factory.create(model=args.model)
     else:
         prov = MockProvider()
 

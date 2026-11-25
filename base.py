@@ -490,6 +490,16 @@ MODEL_PRICING: Dict[str, Tuple[float, float]] = {
     "gpt-5.4-mini":                 (0.0004, 0.0016),
 }
 
+ZERO_COST_PROVIDERS = {"ollama"}
+
+
+def _turn_cost_usd(turn: "TurnStats") -> float:
+    """Computes estimated USD cost for a turn, returning $0.00 for local providers."""
+    if turn.provider in ZERO_COST_PROVIDERS:
+        return 0.0
+    pricing = MODEL_PRICING.get(turn.model, (0.003, 0.015))
+    return (turn.input_tokens * pricing[0] + turn.output_tokens * pricing[1]) / 1000
+
 
 @dataclass
 class CachedResponseMetadata:
@@ -597,7 +607,7 @@ class SessionStats:
             cached_metadata=cached_meta,
             latency_ms=latency_ms,
             source=(source if source is not None
-                    else ("live" if provider in {"anthropic", "openai"} else "mock")),
+                    else ("live" if provider in {"anthropic", "openai", "ollama", "gemini", "openrouter"} else "mock")),
         )
         self.turns.append(turn)
 
@@ -641,10 +651,7 @@ class SessionStats:
         hit_rate = (total_read / total_billable) if total_billable else 0.0
 
         # Cost estimation
-        total_cost = 0.0
-        for t in self.turns:
-            pricing = MODEL_PRICING.get(t.model, (0.003, 0.015))
-            total_cost += (t.input_tokens * pricing[0] + t.output_tokens * pricing[1]) / 1000
+        total_cost = sum(_turn_cost_usd(t) for t in self.turns)
 
         non_classify = [t for t in self.turns if t.mode not in {"classify", "summary"}]
         total_non_classify = len(non_classify)
@@ -683,11 +690,7 @@ class SessionStats:
         return (total_read / total_in) if total_in else 0.0
 
     def estimated_cost_usd(self) -> float:
-        total_cost = 0.0
-        for t in self.turns:
-            pricing = MODEL_PRICING.get(t.model, (0.003, 0.015))
-            total_cost += (t.input_tokens * pricing[0] + t.output_tokens * pricing[1]) / 1000
-        return total_cost
+        return sum(_turn_cost_usd(t) for t in self.turns)
 
 
 # ============================================================

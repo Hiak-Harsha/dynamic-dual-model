@@ -131,3 +131,67 @@ def test_gemini_history_plumbing():
     provider.append_tool_results(history, [tc], {"tc_0": "search result"})
     assert history[2]["role"] == "function"
     assert history[2]["parts"][0]["functionResponse"]["name"] == "search"
+
+
+def test_ollama_hallucinated_tool_json_retries_without_tools():
+    """When Ollama emits fake tool-call JSON in plain text, full_brain_step retries without tools."""
+    captured_payloads = []
+
+    def mock_post(endpoint, payload):
+        captured_payloads.append(payload)
+        if "tools" in payload:
+            return {
+                "message": {
+                    "content": '{"name": "explain_caching", "parameters": {"topic": "tokens"}}',
+                    "tool_calls": [],
+                },
+                "prompt_eval_count": 50,
+                "eval_count": 20,
+            }
+        return {
+            "message": {"content": "Procedural caching avoids repeated LLM calls."},
+            "prompt_eval_count": 40,
+            "eval_count": 12,
+        }
+
+    provider = OllamaProvider(request_fn=mock_post)
+    tools = [ToolDef(name="read_file", description="read", parameters={"type": "object", "properties": {}})]
+    resp = provider.full_brain_step([{"role": "user", "content": "Explain caching"}], tools, effort="medium")
+    assert len(captured_payloads) == 2
+    assert "tools" in captured_payloads[0]
+    assert "tools" not in captured_payloads[1]
+    assert resp.text == "Procedural caching avoids repeated LLM calls."
+
+
+def test_ollama_zero_cost_accounting():
+    """SessionStats records $0.00 cost for local Ollama turns."""
+    from base import SessionStats
+    stats = SessionStats()
+    stats.add(
+        "full_brain",
+        "ollama",
+        ProviderResponse(text="ok", tool_calls=[], stop_reason="end_turn", raw=None, input_tokens=500, output_tokens=100),
+        model="llama3.2",
+        log_file="",
+    )
+    assert stats.estimated_cost_usd() == 0.0
+    assert "$0.0000" in stats.report()
+
+
+def test_statistics_of_routes_deterministically_to_muscle():
+    """'statistics of: ...' routes to deterministic_text_statistics without counting the command prefix."""
+    import tempfile
+    from controller import AgentController
+    from procedural_memory import ProceduralMemory
+    from tests.mock_provider import MockProvider
+
+    ctrl = AgentController(
+        provider=MockProvider(),
+        memory=ProceduralMemory(storage_path=tempfile.mktemp(suffix="_stats_skills.json")),
+    )
+    task = ctrl.start("statistics of: The quick brown fox jumps over the lazy dog.")
+    reply = ctrl.execute_task(task)
+    assert task.decision.pathway == "muscle"
+    assert task.success is True
+    assert task.exec_state.usage.total_billable_tokens == 0
+    assert "Words: 9" in reply

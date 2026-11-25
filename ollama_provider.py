@@ -273,9 +273,16 @@ class OllamaProvider(ModelProvider):
         res = self._post("/api/chat", payload)
         msg = res.get("message", {})
         text = msg.get("content", "") or ""
-
-        # Parse tool calls
         raw_tools = msg.get("tool_calls", [])
+
+        # Small local models can emit a fake JSON tool call in plain content when tools are attached.
+        # Retry once without tools so non-tool prompts return direct prose.
+        if "tools" in payload and not raw_tools and self._looks_like_hallucinated_tool_json(text):
+            retry_payload = {k: v for k, v in payload.items() if k != "tools"}
+            res = self._post("/api/chat", retry_payload)
+            msg = res.get("message", {})
+            text = msg.get("content", "") or ""
+            raw_tools = msg.get("tool_calls", [])
         parsed_tools: List[ToolCall] = []
         for i, rt in enumerate(raw_tools):
             fn = rt.get("function", {})
@@ -306,6 +313,18 @@ class OllamaProvider(ModelProvider):
             cache_read_tokens=0,
             cache_write_tokens=0,
         )
+
+    @staticmethod
+    def _looks_like_hallucinated_tool_json(text: str) -> bool:
+        """Detects a raw JSON function-call stub emitted as assistant text."""
+        stripped = text.strip()
+        if not (stripped.startswith("{") and stripped.endswith("}")):
+            return False
+        try:
+            data = json.loads(stripped)
+        except Exception:
+            return False
+        return isinstance(data, dict) and "name" in data and ("parameters" in data or "arguments" in data)
 
     # ------------------------------------------------------------------
     # Summary Compression

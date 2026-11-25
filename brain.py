@@ -86,6 +86,7 @@ class BrainEngine:
         exec_state: Optional[ExecutionState] = None,
         budget: Optional[Any] = None,
         on_step: Optional[Any] = None,
+        allow_tools: bool = True,
     ) -> Tuple[str, ProviderResponse, ExecutionState]:
         """Executes a Full Brain deliberative turn with full tool loop and updates exec_state."""
         if exec_state is None:
@@ -127,8 +128,9 @@ class BrainEngine:
                 trajectory.success = False
                 return last_resp.text, last_resp, exec_state
 
+            active_tools = self.tools if allow_tools else []
             t0 = time.perf_counter()
-            resp = provider.full_brain_step(state.full_brain_history, self.tools, effort=effective_effort)
+            resp = provider.full_brain_step(state.full_brain_history, active_tools, effort=effective_effort)
             latency = (time.perf_counter() - t0) * 1000
             last_resp = resp
 

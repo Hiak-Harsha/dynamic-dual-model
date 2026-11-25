@@ -115,6 +115,11 @@ PURE_ARITHMETIC_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+TEXT_STATISTICS_PATTERN = re.compile(
+    r"^\s*(?:(?:compute|calculate|get|show)\s+)?(?:text\s+)?(?:statistics|stats)\s*(?:of|for)?\s*:\s*\S+",
+    re.IGNORECASE,
+)
+
 STATIC_TRIVIA_PATTERN = re.compile(
     r"^\s*(what\s+is\s+the\s+capital\s+of\s+[a-zA-Z\s]+|"
     r"who\s+wrote\s+[a-zA-Z\s]+|"
@@ -289,6 +294,27 @@ def deterministic_route(
             estimated_handoff_cost=100,
             estimated_brain_cost=1200,
             reasoning="Deterministic gate: pure arithmetic expression evaluable by AST.",
+        )
+
+    # Gate 6b: Deterministic Text Statistics
+    if TEXT_STATISTICS_PATTERN.match(clean):
+        return RouteDecision(
+            pathway="muscle",
+            confidence=1.0,
+            procedure_match="deterministic_text_statistics",
+            procedure_confidence=1.0,
+            procedure_success_rate=1.0,
+            context_required=False,
+            tools_required=False,
+            freshness_required=False,
+            novelty=0.05,
+            risk="low",
+            verification_available=True,
+            expected_muscle_success_probability=1.0,
+            estimated_muscle_cost=0,
+            estimated_handoff_cost=100,
+            estimated_brain_cost=1200,
+            reasoning="Deterministic gate: text statistics request.",
         )
 
     # Gate 7: Static trivia

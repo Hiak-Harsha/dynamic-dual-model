@@ -29,6 +29,7 @@ import tempfile
 from tools import TOOLS, execute_tool, _resolve_in_sandbox
 from verification import verify
 from procedural_memory import ProceduralMemory
+from success_contracts import resolve_contract
 
 # 25-turn comprehensive mixed evaluation workload
 AB_WORKLOAD = [
@@ -98,8 +99,10 @@ def run_baseline_agent(provider: ModelProvider, workload: List[Dict[str, Any]]) 
 
         v_mode = "execution" if brain_exec_state.tool_state else ("structural" if any(m in reply for m in ["```json", "```python"]) else "consistency")
         v_res = verify(reply, user_input, brain_exec_state, verification_mode=v_mode, provider=provider)
+        contract = resolve_contract(user_input, provider=provider)
+        c_res = contract.evaluate(brain_exec_state, reply, brain_exec_state)
 
-        success = v_res.passed and not brain_exec_state.errors
+        success = v_res.passed and (c_res.verified or c_res.task_satisfied) and not brain_exec_state.errors
         results.append({
             "id": item["id"],
             "turn": user_input,
@@ -162,28 +165,16 @@ def evaluate_ab(provider_name: str = "mock", live: bool = False, model: Optional
     print("=" * 80)
 
     if live:
-        if provider_name == "anthropic":
-            api_key = os.getenv("ANTHROPIC_API_KEY")
-            if not api_key:
-                print("\n[ERROR] ANTHROPIC_API_KEY is not set in your environment!")
-                print("To run live: set ANTHROPIC_API_KEY=\"sk-ant-...\" in your terminal, then retry.\n")
-                sys.exit(1)
-            from anthropic_provider import AnthropicProvider
-            model_id = model or "claude-sonnet-5"
-            p_baseline = AnthropicProvider(model=model_id)
-            p_dual = AnthropicProvider(model=model_id)
-        elif provider_name == "openai":
-            api_key = os.getenv("OPENAI_API_KEY")
-            if not api_key:
-                print("\n[ERROR] OPENAI_API_KEY is not set in your environment!")
-                print("To run live: set OPENAI_API_KEY=\"sk-...\" in your terminal, then retry.\n")
-                sys.exit(1)
-            from openai_provider import OpenAIProvider
-            model_id = model or "gpt-5.5"
-            p_baseline = OpenAIProvider(model=model_id)
-            p_dual = OpenAIProvider(model=model_id)
-        else:
-            raise ValueError(f"Unknown live provider: {provider_name}")
+        from provider_registry import build_default_registry
+        factory = build_default_registry().get_factory(provider_name)
+        if factory is None or not factory.is_available():
+            status = factory.status_label() if factory else "UNAVAILABLE"
+            print(f"\n[ERROR] Provider '{provider_name}' is not available ({status})!\n")
+            sys.exit(1)
+        default_override = "claude-sonnet-5" if provider_name == "anthropic" else ("gpt-5.5" if provider_name == "openai" else None)
+        model_id = model or default_override
+        p_baseline = factory.create(model=model_id)
+        p_dual = factory.create(model=model_id)
     else:
         from tests.mock_provider import MockProvider
         p_baseline = MockProvider(tool_rounds=1)
@@ -315,7 +306,7 @@ def main():
     parser = argparse.ArgumentParser(description="Run V6 Empirical A/B Benchmark.")
     parser.add_argument("--live", action="store_true", help="Execute against live API (requires API keys)")
     parser.add_argument("--mock", action="store_true", help="Execute against deterministic mock provider (default)")
-    parser.add_argument("--provider", default="anthropic", choices=["anthropic", "openai"], help="Live provider to evaluate")
+    parser.add_argument("--provider", default="anthropic", choices=["anthropic", "openai", "ollama", "gemini", "openrouter"], help="Live provider to evaluate")
     parser.add_argument("--model", default=None, help="Explicit model override")
 
     args = parser.parse_args()

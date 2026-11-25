@@ -37,7 +37,7 @@ from execution_state import ExecutionState, HandoffState
 from handoff import build_handoff
 from muscle_engine import MuscleExecutor, MuscleResult, COMPLETED_VERIFIED, COMPLETED_UNVERIFIED, HANDOFF_REQUIRED
 from procedural_memory import ProceduralMemory, Skill, ProcedureType, normalize_intent_family
-from router import route, RouteDecision
+from router import route, RouteDecision, TOOL_PATTERN, DESTRUCTIVE_PATTERN
 from verification import verify, VerificationResult
 from success_contracts import (
     SuccessContract,
@@ -371,8 +371,20 @@ class AgentController:
         def on_brain_step(step_resp: ProviderResponse, step_lat: float):
             self.stats.add("full_brain", self.provider.name, step_resp, model=self.provider.model, effort=effort, latency_ms=step_lat)
 
+        allow_tools = bool(
+            decision.tools_required
+            or decision.context_required
+            or TOOL_PATTERN.search(task.user_input)
+            or DESTRUCTIVE_PATTERN.search(task.user_input)
+        )
         reply, last_resp, brain_exec_state = self.brain.execute_turn(
-            self._runtime, self.state, task.user_input, effort=effort, exec_state=task.exec_state, on_step=on_brain_step
+            self._runtime,
+            self.state,
+            task.user_input,
+            effort=effort,
+            exec_state=task.exec_state,
+            on_step=on_brain_step,
+            allow_tools=allow_tools,
         )
         task.exec_state = brain_exec_state
         if last_resp.stop_reason == "end_turn":

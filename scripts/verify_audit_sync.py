@@ -99,7 +99,7 @@ def sync_or_verify(update: bool = False) -> bool:
                 if os.path.exists(full_path):
                     with open(full_path, "rb") as f:
                         manifest["core_module_checksums"][rel_path] = hashlib.sha256(f.read()).hexdigest()
-            manifest["version"] = "8.1.0"
+            manifest.setdefault("version", "9.1.0")
             with open(MANIFEST_PATH, "w", encoding="utf-8") as f:
                 json.dump(manifest, f, indent=2)
             print("[SYNC] Successfully updated build_manifest.json checksums.")

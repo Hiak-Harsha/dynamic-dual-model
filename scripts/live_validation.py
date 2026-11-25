@@ -238,7 +238,7 @@ def run_all(provider: ModelProvider, limit: Optional[int] = None) -> bool:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Authoritative Live and Simulated Model Validation CLI")
-    parser.add_argument("--provider", default="mock", choices=["mock", "anthropic", "openai"])
+    parser.add_argument("--provider", default="mock", choices=["mock", "anthropic", "openai", "ollama", "gemini", "openrouter"])
     parser.add_argument(
         "--test",
         default="all",
@@ -249,24 +249,17 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Pre-flight check for live providers
-    if args.provider == "anthropic":
-        if not os.getenv("ANTHROPIC_API_KEY"):
-            print("\n[PRE-FLIGHT ERROR] ANTHROPIC_API_KEY is not set in environment.")
-            print("To run live Anthropic validation: export ANTHROPIC_API_KEY='sk-ant-...' and retry.\n")
-            sys.exit(1)
-        from anthropic_provider import AnthropicProvider
-        model = args.model or "claude-3-5-sonnet-20241022"
-        provider = AnthropicProvider(model=model)
-    elif args.provider == "openai":
-        if not os.getenv("OPENAI_API_KEY"):
-            print("\n[PRE-FLIGHT ERROR] OPENAI_API_KEY is not set in environment.")
-            print("To run live OpenAI validation: export OPENAI_API_KEY='sk-...' and retry.\n")
-            sys.exit(1)
-        from openai_provider import OpenAIProvider
-        model = args.model or "gpt-4o"
-        provider = OpenAIProvider(model=model)
-    else:
+    if args.provider == "mock":
         provider = MockProvider(tool_rounds=1)
+    else:
+        from provider_registry import build_default_registry
+        factory = build_default_registry().get_factory(args.provider)
+        if factory is None or not factory.is_available():
+            status = factory.status_label() if factory else "UNAVAILABLE"
+            print(f"\n[PRE-FLIGHT ERROR] Provider '{args.provider}' is not available ({status}).\n")
+            sys.exit(1)
+        default_override = "claude-3-5-sonnet-20241022" if args.provider == "anthropic" else None
+        provider = factory.create(model=args.model or default_override)
 
     test_map = {
         "basic": test_basic,

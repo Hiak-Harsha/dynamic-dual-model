@@ -139,6 +139,7 @@ Suites: `basic`, `deterministic`, `tool`, `handoff`, `restart_resume`, or `all`.
 
 ```powershell
 python scripts/live_validation.py --provider mock --test all
+python scripts/live_validation.py --provider ollama --model llama3.2 --test all
 python scripts/live_validation.py --provider anthropic --test all
 python scripts/live_validation.py --provider openai --test deterministic --limit 2
 ```
@@ -147,6 +148,7 @@ python scripts/live_validation.py --provider openai --test deterministic --limit
 
 ```powershell
 python scripts/live_api_smoke_test.py --mock
+python scripts/live_api_smoke_test.py --provider ollama --model llama3.2
 python scripts/live_api_smoke_test.py --provider anthropic
 python scripts/live_api_smoke_test.py --provider openai
 ```
@@ -155,6 +157,7 @@ python scripts/live_api_smoke_test.py --provider openai
 
 ```powershell
 python scripts/ab_runner.py --mock
+python scripts/ab_runner.py --live --provider ollama --model llama3.2
 python scripts/ab_runner.py --live --provider anthropic
 python scripts/ab_runner.py --live --provider openai --model gpt-4o
 ```
@@ -164,6 +167,7 @@ Compares **Condition A** (Brain-only), **Condition B** (Muscle-only), **Conditio
 
 ```powershell
 python benchmark/scientific_ab_runner.py --mock --limit 18
+python benchmark/scientific_ab_runner.py --live --provider ollama --model llama3.2 --limit 18
 python benchmark/scientific_ab_runner.py --live --provider openai --limit 18
 ```
 

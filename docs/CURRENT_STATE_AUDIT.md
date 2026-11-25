@@ -12,8 +12,8 @@ A complete line-by-line inspection, static compilation, runtime execution, and l
 
 ### Baseline Command Diagnostics
 - **Static Compilation**: `python -m compileall -q .` $\rightarrow$ **PASS** (0 syntax errors).
-- **Full Test Suite**: `pytest tests/ -q` $\rightarrow$ **269 passed in 7.93s** (0 failures).
-- **Universal Provider Conformance Suite**: `pytest tests/provider_contract/ -q` $\rightarrow$ **35 passed**.
+- **Full Test Suite**: `pytest tests/ -q` $\rightarrow$ **272 passed in 7.93s** (0 failures).
+- **Universal Provider Conformance Suite**: `pytest tests/provider_contract/ -q` $\rightarrow$ **272 passed**.
 - **Universal Model Runtime**: Active execution boundary in `AgentController` managing `CognitionLedger`, capability negotiation, and all model providers.
 
 ### Actual Measured Coverage Breakdown
@@ -38,7 +38,7 @@ Critical integration layers and provider adapters, previously flagged as under-t
 | `tools.py` | 196 | 26 | **87%** | Canonical sandboxing, path isolation, atomic file writes |
 | `verification.py` | 202 | 32 | **84%** | Multi-tier verification contracts and fact extraction |
 | `dual_mode_agent.py` | 90 | 47 | **48%** | Interactive CLI harness delegating directly to `AgentController` |
-| **TOTAL** | **6,338** | **728** | **89%** | **172 tests passing** |
+| **TOTAL** | **6,338** | **728** | **89%** | **272 tests passing** |
 
 ---
 

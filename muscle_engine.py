@@ -103,7 +103,12 @@ def _run_deterministic_json(user_message: str, state: ExecutionState) -> Tuple[b
 
 def _run_deterministic_text_stats(user_message: str, state: ExecutionState) -> Tuple[bool, str]:
     state.add_completed_step("Attempted deterministic text statistics")
-    clean = user_message.strip()
+    clean = re.sub(
+        r"^\s*(?:(?:compute|calculate|get|show)\s+)?(?:text\s+)?(?:statistics|stats)\s*(?:of|for)?\s*:\s*",
+        "",
+        user_message.strip(),
+        flags=re.IGNORECASE,
+    ).strip() or user_message.strip()
     words = clean.split()
     lines = clean.splitlines()
     chars = len(clean)

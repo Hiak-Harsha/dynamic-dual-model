@@ -104,7 +104,7 @@ def run_smoke_test(provider: ModelProvider, is_mock: bool = False):
 
 def main():
     parser = argparse.ArgumentParser(description="Live API 5-turn smoke test")
-    parser.add_argument("--provider", choices=["anthropic", "openai"], default="anthropic")
+    parser.add_argument("--provider", choices=["anthropic", "openai", "ollama", "gemini", "openrouter"], default="anthropic")
     parser.add_argument("--model", type=str, default=None)
     parser.add_argument("--mock", action="store_true", help="Run with deterministic MockProvider")
     args = parser.parse_args()
@@ -154,26 +154,15 @@ def main():
         run_smoke_test(provider, is_mock=True)
         return
 
-    if args.provider == "anthropic":
-        api_key = os.getenv("ANTHROPIC_API_KEY")
-        if not api_key:
-            print("ERROR: ANTHROPIC_API_KEY environment variable is not set.")
-            print("Set your key: export ANTHROPIC_API_KEY='sk-...' or $env:ANTHROPIC_API_KEY='sk-...'")
-            print("Or run with --mock for simulated smoke testing.")
-            sys.exit(1)
-        from anthropic_provider import AnthropicProvider
-        model = args.model or "claude-3-5-sonnet-20241022"
-        provider = AnthropicProvider(model=model)
-    else:
-        api_key = os.getenv("OPENAI_API_KEY")
-        if not api_key:
-            print("ERROR: OPENAI_API_KEY environment variable is not set.")
-            print("Set your key: export OPENAI_API_KEY='sk-...' or $env:OPENAI_API_KEY='sk-...'")
-            print("Or run with --mock for simulated smoke testing.")
-            sys.exit(1)
-        from openai_provider import OpenAIProvider
-        model = args.model or "gpt-4o"
-        provider = OpenAIProvider(model=model)
+    from provider_registry import build_default_registry
+    factory = build_default_registry().get_factory(args.provider)
+    if factory is None or not factory.is_available():
+        status = factory.status_label() if factory else "UNAVAILABLE"
+        print(f"ERROR: Provider '{args.provider}' is not ready ({status}).")
+        print("Or run with --mock for simulated smoke testing.")
+        sys.exit(1)
+    default_override = "claude-3-5-sonnet-20241022" if args.provider == "anthropic" else ("gpt-4o" if args.provider == "openai" else None)
+    provider = factory.create(model=args.model or default_override)
 
     run_smoke_test(provider, is_mock=False)
 
